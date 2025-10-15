@@ -1,0 +1,27 @@
+spring:
+  application:
+    name: spring-AI
+  ai:
+    openai:
+      api-key: ${OPENAI_API_KEY}
+      chat:
+        options:
+          model: gpt-4o-mini
+    ollama:
+      chat:
+        options:
+          model: llama3.2:1b
+    chat:
+      client:
+        enabled: false
+  main:
+    banner-mode: off
+
+server:
+  port: 8080
+
+logging:
+  pattern:
+    console: "%green(%d{yyyy-MM-dd HH:mm:ss.SSS}) %blue(%-5level) %magenta(${PID:- }) --- %red([%15.15thread]) %yellow(%-40.40logger{39}): %msg%n%wEx"
+  level:
+    org.tommap.springai: debug
