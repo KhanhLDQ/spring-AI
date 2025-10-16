@@ -6,6 +6,9 @@ import org.springframework.ai.openai.OpenAiChatModel;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
+import static org.tommap.springai.constant.SystemRoleConstants.IT_HELPDESK_ASSISTANT_SYSTEM_ROLE;
+import static org.tommap.springai.constant.UserRoleConstants.DEFAULT_USER_ROLE;
+
 @Configuration
 public class ChatClientConfig {
     /*
@@ -20,11 +23,16 @@ public class ChatClientConfig {
 
         - spring AI autoconfigures a single chat client bean -> suitable for simple use cases
         - when multiple models are involved -> manually configure multiple chat client beans for each model -> inject desired builder based on business requirements
+
+        - defaults -> preconfigured values or behaviors that are applied automatically to each request made through the ChatClient - unless overridden
      */
 
     @Bean
     public ChatClient openAiChatClient(OpenAiChatModel openAiChatModel) {
-        return ChatClient.builder(openAiChatModel).build();
+        return ChatClient.builder(openAiChatModel)
+                .defaultSystem(IT_HELPDESK_ASSISTANT_SYSTEM_ROLE)
+                .defaultUser(DEFAULT_USER_ROLE)
+                .build();
     }
 
     @Bean

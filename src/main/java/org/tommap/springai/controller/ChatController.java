@@ -12,6 +12,8 @@ import org.tommap.springai.model.response.ApiResponse;
 
 import javax.validation.Valid;
 
+import static org.tommap.springai.constant.SystemRoleConstants.HR_ASSISTANT_SYSTEM_ROLE;
+
 @RestController
 @RequestMapping("/api/v1/chat")
 public class ChatController {
@@ -26,12 +28,21 @@ public class ChatController {
         this.ollamaChatClient = ollamaChatClient;
     }
 
+    /*
+        - SystemRole -> provide instructions for how the LLMs should behave
+        - UserRole -> what the user says or asks
+        - AssistantRole -> the LLMs' response
+        - FunctionRole -> special instructions to run a function or fetch data
+     */
     @PostMapping
     public ResponseEntity<ApiResponse<String>> chat(
         @RequestBody @Valid ChatRequest chatRequest
     ) {
         var response = selectChatClient(chatRequest.getModel())
-                .prompt(chatRequest.getMessage())
+//                .prompt(chatRequest.getMessage())
+                .prompt()
+                .system(HR_ASSISTANT_SYSTEM_ROLE) //override default system message in ChatClient
+                .user(chatRequest.getMessage()) //override default user message in ChatClient
                 .call() //invoke LLMs
                 .content();
 
