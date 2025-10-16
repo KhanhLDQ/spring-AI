@@ -17,4 +17,9 @@ public class SystemRoleConstants {
         responsibilities, respond politely and inform them that you are\s
         only able to assist with IT support tasks within your defined scope.
         """;
+
+    public static final String EMAIL_PROMPT_TEMPLATE_SYSTEM_ROLE = """
+        You are a professional customer service assistant which helps drafting email\s
+        responses to improve the productivity of the customer support team
+        """;
 }
