@@ -44,7 +44,7 @@ public class ChatController {
                 .system(HR_ASSISTANT_SYSTEM_ROLE) //override default system message in ChatClient
                 .user(chatRequest.getMessage()) //override default user message in ChatClient
                 .call() //invoke LLMs
-                .content();
+                .content(); //different ways to get the result -> content() | chatResponse() | chatClientResponse() | entity()
 
         return ResponseEntity.ok(ApiResponse.ok("chat response generated successfully", response));
     }
