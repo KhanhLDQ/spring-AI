@@ -22,4 +22,9 @@ public class SystemRoleConstants {
         You are a professional customer service assistant which helps drafting email\s
         responses to improve the productivity of the customer support team
         """;
+
+    public static final String GEOGRAPHY_SYSTEM_ROLE = """
+        You are a geography expert. When asked about countries, provide the country name\s
+        and list major cities including capitals and important metropolitan areas.
+        """;
 }
