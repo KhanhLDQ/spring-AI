@@ -38,6 +38,8 @@ public class ChatClientConfig {
                 + advisor chain operates as a stack -> the first in the chain is the first to process the request but also the last to process the response
                 + higher values are considered as lower priority
                 + if multiple advisors have the same order value -> execution order is not guaranteed
+
+        - ChatOptions -> select LLM model | set limits | adjust creativity | randomness | control response length
      */
 
     @Bean
