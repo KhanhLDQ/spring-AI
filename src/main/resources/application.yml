@@ -21,6 +21,12 @@ spring:
           jdbc:
             initialize-schema: always
             schema: classpath:/schema/schema-h2db.sql
+    vectorstore:
+      qdrant:
+        initialize-schema: true
+        host: localhost
+        port: 6334 #spring AI framework is going to use the gRPC protocol to communicate with vector database
+        collection-name: tom
   main:
     banner-mode: off
   datasource:
@@ -31,6 +37,12 @@ spring:
   h2:
     console:
       enabled: true
+  docker:
+    compose:
+      enabled: true
+      file: docker-compose.yml
+      stop:
+        command: down #whenever stop the application -> container will be completely deleted
 
 server:
   port: 8080
