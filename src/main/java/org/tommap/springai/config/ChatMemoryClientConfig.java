@@ -9,10 +9,15 @@ import org.springframework.ai.chat.memory.MessageWindowChatMemory;
 import org.springframework.ai.chat.memory.repository.jdbc.JdbcChatMemoryRepository;
 import org.springframework.ai.openai.OpenAiChatModel;
 import org.springframework.ai.rag.advisor.RetrievalAugmentationAdvisor;
+import org.springframework.ai.rag.preretrieval.query.transformation.TranslationQueryTransformer;
 import org.springframework.ai.rag.retrieval.search.VectorStoreDocumentRetriever;
 import org.springframework.ai.vectorstore.VectorStore;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.tommap.springai.rag.PIIMaskingDocumentPostProcessor;
+
+import java.util.List;
 
 @Configuration
 public class ChatMemoryClientConfig {
@@ -48,14 +53,28 @@ public class ChatMemoryClientConfig {
     }
 
     @Bean //automatically handle document retrieval from a vector store
-    public RetrievalAugmentationAdvisor retrievalAugmentationAdvisor(VectorStore vectorStore) {
+    public RetrievalAugmentationAdvisor retrievalAugmentationAdvisor(
+        VectorStore vectorStore,
+        @Qualifier("openAiChatClientBuilder") ChatClient.Builder openAiChatClientBuilder
+    ) {
+        //pre-retrieval
+        TranslationQueryTransformer translationQueryTransformer = TranslationQueryTransformer.builder() //adapt queries across unsupported languages
+                .chatClientBuilder(openAiChatClientBuilder)
+                .targetLanguage("english")
+                .build();
+
+        //post-retrieval
+        PIIMaskingDocumentPostProcessor piiMaskingDocumentPostProcessor = PIIMaskingDocumentPostProcessor.builder().build();
+
         return RetrievalAugmentationAdvisor.builder()
+                .queryTransformers(List.of(translationQueryTransformer))
                 .documentRetriever(VectorStoreDocumentRetriever.builder()
                         .vectorStore(vectorStore)
                         .topK(3)
                         .similarityThreshold(0.5)
                         .build()
                 )
+                .documentPostProcessors(List.of(piiMaskingDocumentPostProcessor))
                 .build();
     }
 }

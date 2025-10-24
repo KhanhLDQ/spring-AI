@@ -26,9 +26,14 @@ public class HrPolicyDataLoader {
         TikaDocumentReader tikaDocumentReader = new TikaDocumentReader(hrPolicies);
         List<Document> documents = tikaDocumentReader.get();
 
-        //split original documents to smaller chunks
+        /*
+            - split original documents to smaller chunks
+            - but who is calculating the embedded values for the document chunks?
+                + embeddings -> complex process to calculate vector numbers for a given text
+                + EmbeddingModel(I)-> EmbeddingResponse call(EmbeddingRequest request) -> method to calculate embedded values for each of the document
+         */
         TextSplitter textSplitter = TokenTextSplitter.builder()
-                .withChunkSize(100) //max number of tokens per chunk
+                .withChunkSize(200) //max number of tokens per chunk
                 .withMaxNumChunks(400) //max number of chunks to generate from a text
                 .build();
 

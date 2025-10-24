@@ -58,6 +58,15 @@ public class RagChatClientConfig {
         - enable rag flow with web search
             + why? -> whatever core LLM models that we are trying to integrate with - they're not capable of reading the latest information from the web -> they're always going to have a cut-off knowledge date
             + use search engine API -> tavily - https://www.tavily.com/
+
+        - naive RAG -> simple approach where retrieved documents are directly passed to the LLM models without optimization -> lead to irrelevant or redundant context
+        - advanced RAG -> enhanced pipeline that applies techniques like query rewriting | filtering | reranking | summarization ... before and after retrieval to deliver more accurate & concise results
+            + pre-retrieval -> reduce redundant context without losing the meaning - https://docs.spring.io/spring-ai/reference/api/retrieval-augmented-generation.html#_pre_retrieval
+                - convert input query into a more effective form
+                - handle poor structured queries | resolve ambiguous terms | simplify complex vocab
+                - adapt queries across unsupported languages for better search results
+            + post-retrieval -> https://docs.spring.io/spring-ai/reference/api/retrieval-augmented-generation.html#_post_retrieval
+                - refine the retrieved documents before augmentation -> ranking relevance | compress content | mask sensitive information ...
      */
 
     private static final String TOKEN_PREFIX = "Bearer ";
