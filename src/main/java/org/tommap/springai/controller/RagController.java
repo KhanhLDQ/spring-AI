@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.tommap.springai.model.request.RagDocumentRequest;
 import org.tommap.springai.model.request.RagRandomRequest;
 import org.tommap.springai.model.response.ApiResponse;
 
@@ -27,6 +28,9 @@ import static org.springframework.ai.chat.memory.ChatMemory.CONVERSATION_ID;
 public class RagController {
     @Value("classpath:/promptTemplates/systemPromptRandomDataTemplate.st")
     Resource systemPromptRandomDataTemplate;
+
+    @Value("classpath:/promptTemplates/systemPromptDocumentDataTemplate.st")
+    Resource systemPromptDocumentDataTemplate;
 
     private final ChatClient openAiChatMemoryClient;
     private final VectorStore vectorStore;
@@ -45,30 +49,63 @@ public class RagController {
         @RequestBody @Valid RagRandomRequest request
     ) {
         //perform similarity search from qdrant
-        SearchRequest searchRequest = SearchRequest.builder()
-                .query(request.getMessage())
-                .topK(3) //what are the top number of documents that the search operation needs to consider
-                .similarityThreshold(0.5) //only include documents with similarity score >= 0.5
-                .build();
-
-        List<Document> relevantDocs = vectorStore.similaritySearch(searchRequest);
+//        SearchRequest searchRequest = SearchRequest.builder()
+//                .query(request.getMessage())
+//                .topK(3) //what are the top number of documents that the search operation needs to consider
+//                .similarityThreshold(0.5) //only include documents with similarity score >= 0.5
+//                .build();
+//
+//        List<Document> relevantDocs = vectorStore.similaritySearch(searchRequest);
 
         //format the retrieved context
-        String relevantContext = relevantDocs.stream()
-                .map(Document::getText)
-                .collect(Collectors.joining(System.lineSeparator()));
+//        String relevantContext = relevantDocs.stream()
+//                .map(Document::getText)
+//                .collect(Collectors.joining(System.lineSeparator()));
 
         //generate response
         var response = openAiChatMemoryClient.prompt()
-                .system(promptSystemSpec -> promptSystemSpec
-                        .text(systemPromptRandomDataTemplate)
-                        .param("documents", relevantContext)
-                )
+//                .system(promptSystemSpec -> promptSystemSpec
+//                        .text(systemPromptRandomDataTemplate)
+//                        .param("documents", relevantContext)
+//                )
                 .advisors(advisorSpec -> advisorSpec.param(CONVERSATION_ID, username)) //chat memory - set conversationId
                 .user(request.getMessage())
                 .call() //invoke LLMs
                 .content();
 
         return ResponseEntity.ok(ApiResponse.ok("random rag response generated successfully", response));
+    }
+
+    @PostMapping("/document")
+    public ResponseEntity<ApiResponse<String>> ragDocument(
+        @RequestHeader("username") String username,
+        @RequestBody @Valid RagDocumentRequest request
+    ) {
+        //perform similarity search from qdrant
+//        SearchRequest searchRequest = SearchRequest.builder()
+//                .query(request.getMessage())
+//                .topK(3) //what are the top number of documents that the search operation needs to consider
+//                .similarityThreshold(0.5) //only include documents with similarity score >= 0.5
+//                .build();
+//
+//        List<Document> relevantDocs = vectorStore.similaritySearch(searchRequest);
+
+        //format the retrieved context
+//        String relevantContext = relevantDocs.stream()
+//                .map(Document::getText)
+//                .collect(Collectors.joining(System.lineSeparator()));
+
+        //generate response
+        var response = openAiChatMemoryClient.prompt()
+//                .system(promptSystemSpec -> promptSystemSpec
+//                        .text(systemPromptDocumentDataTemplate)
+//                        .param("documents", relevantContext)
+//                )
+                .advisors(advisorSpec -> advisorSpec.param(CONVERSATION_ID, username)) //chat memory - set conversationId
+                .user(request.getMessage())
+                .call() //invoke LLMs
+                .content();
+
+        return ResponseEntity.ok(ApiResponse.ok("document rag response generated successfully", response));
     }
 }

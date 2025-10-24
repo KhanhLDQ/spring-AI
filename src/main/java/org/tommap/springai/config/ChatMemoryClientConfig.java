@@ -8,6 +8,9 @@ import org.springframework.ai.chat.memory.ChatMemory;
 import org.springframework.ai.chat.memory.MessageWindowChatMemory;
 import org.springframework.ai.chat.memory.repository.jdbc.JdbcChatMemoryRepository;
 import org.springframework.ai.openai.OpenAiChatModel;
+import org.springframework.ai.rag.advisor.RetrievalAugmentationAdvisor;
+import org.springframework.ai.rag.retrieval.search.VectorStoreDocumentRetriever;
+import org.springframework.ai.vectorstore.VectorStore;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -27,12 +30,12 @@ public class ChatMemoryClientConfig {
             + similarly if the total token count exceeds the context window size -> older messages get dropped -> LLM 'forget' what gets dropped
      */
     @Bean
-    public ChatClient openAiChatMemoryClient(OpenAiChatModel openAiChatModel, ChatMemory chatMemory) {
+    public ChatClient openAiChatMemoryClient(OpenAiChatModel openAiChatModel, ChatMemory chatMemory, RetrievalAugmentationAdvisor retrievalAugmentationAdvisor) {
         Advisor loggerAdvisor = new SimpleLoggerAdvisor();
         Advisor memoryAdvisor = MessageChatMemoryAdvisor.builder(chatMemory).build();
 
         return ChatClient.builder(openAiChatModel)
-                .defaultAdvisors(loggerAdvisor, memoryAdvisor)
+                .defaultAdvisors(loggerAdvisor, memoryAdvisor, retrievalAugmentationAdvisor)
                 .build();
     }
 
@@ -41,6 +44,18 @@ public class ChatMemoryClientConfig {
         return MessageWindowChatMemory.builder()
                 .chatMemoryRepository(jdbcChatMemoryRepository)
                 .maxMessages(10)
+                .build();
+    }
+
+    @Bean //automatically handle document retrieval from a vector store
+    public RetrievalAugmentationAdvisor retrievalAugmentationAdvisor(VectorStore vectorStore) {
+        return RetrievalAugmentationAdvisor.builder()
+                .documentRetriever(VectorStoreDocumentRetriever.builder()
+                        .vectorStore(vectorStore)
+                        .topK(3)
+                        .similarityThreshold(0.5)
+                        .build()
+                )
                 .build();
     }
 }
