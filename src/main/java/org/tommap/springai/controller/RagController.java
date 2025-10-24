@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.tommap.springai.model.request.RagDocumentRequest;
 import org.tommap.springai.model.request.RagRandomRequest;
+import org.tommap.springai.model.request.RagWebSearchRequest;
 import org.tommap.springai.model.response.ApiResponse;
 
 import javax.validation.Valid;
@@ -33,13 +34,16 @@ public class RagController {
     Resource systemPromptDocumentDataTemplate;
 
     private final ChatClient openAiChatMemoryClient;
+    private final ChatClient webSearchRagChatClient;
     private final VectorStore vectorStore;
 
     public RagController(
         @Qualifier("openAiChatMemoryClient") ChatClient openAiChatMemoryClient,
+        @Qualifier("webSearchRagChatClient") ChatClient webSearchRagChatClient,
         VectorStore vectorStore
     ) {
         this.openAiChatMemoryClient = openAiChatMemoryClient;
+        this.webSearchRagChatClient = webSearchRagChatClient;
         this.vectorStore = vectorStore;
     }
 
@@ -107,5 +111,19 @@ public class RagController {
                 .content();
 
         return ResponseEntity.ok(ApiResponse.ok("document rag response generated successfully", response));
+    }
+
+    @PostMapping("/web-search")
+    public ResponseEntity<ApiResponse<String>> ragWebSearch(
+        @RequestHeader("username") String username,
+        @RequestBody @Valid RagWebSearchRequest request
+    ) {
+        var response = webSearchRagChatClient.prompt()
+                .advisors(advisorSpec -> advisorSpec.param(CONVERSATION_ID, username))
+                .user(request.getMessage())
+                .call()
+                .content();
+
+        return ResponseEntity.ok(ApiResponse.ok("web search rag response generated successfully", response));
     }
 }

@@ -1,6 +1,19 @@
 package org.tommap.springai.config;
 
+import org.springframework.ai.chat.client.ChatClient;
+import org.springframework.ai.chat.client.advisor.MessageChatMemoryAdvisor;
+import org.springframework.ai.chat.client.advisor.SimpleLoggerAdvisor;
+import org.springframework.ai.chat.client.advisor.api.Advisor;
+import org.springframework.ai.chat.memory.ChatMemory;
+import org.springframework.ai.openai.OpenAiChatModel;
+import org.springframework.ai.rag.advisor.RetrievalAugmentationAdvisor;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.web.client.RestClient;
+import org.tommap.springai.rag.WebSearchDocumentRetriever;
+
+import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 
 @Configuration
 public class RagChatClientConfig {
@@ -41,5 +54,41 @@ public class RagChatClientConfig {
             + augment the prompt
                 - inject the retrieved chunks into the prompt
                 - the LLM model uses this relevant context to generate accurate answers
+
+        - enable rag flow with web search
+            + why? -> whatever core LLM models that we are trying to integrate with - they're not capable of reading the latest information from the web -> they're always going to have a cut-off knowledge date
+            + use search engine API -> tavily - https://www.tavily.com/
      */
+
+    private static final String TOKEN_PREFIX = "Bearer ";
+
+    @Bean
+    public ChatClient webSearchRagChatClient(
+        OpenAiChatModel openAiChatModel,
+        ChatMemory chatMemory,
+        @Qualifier("tavilyRestClient") RestClient tavilyRestClient,
+        TavilyProperties tavilyProperties
+    ) {
+        Advisor loggerAdvisor = new SimpleLoggerAdvisor();
+        Advisor memoryAdvisor = MessageChatMemoryAdvisor.builder(chatMemory).build();
+        Advisor webSearchRagAdvisor = RetrievalAugmentationAdvisor.builder() //rag with web search
+                .documentRetriever(WebSearchDocumentRetriever.builder()
+                        .resultLimit(tavilyProperties.getMaxResults())
+                        .restClient(tavilyRestClient)
+                        .build()
+                )
+                .build();
+
+        return ChatClient.builder(openAiChatModel)
+                .defaultAdvisors(loggerAdvisor, memoryAdvisor, webSearchRagAdvisor)
+                .build();
+    }
+
+    @Bean
+    public RestClient tavilyRestClient(TavilyProperties tavilyProperties) {
+        return RestClient.builder()
+                .baseUrl(tavilyProperties.getSearchBaseUrl())
+                .defaultHeader(AUTHORIZATION, String.format("%s%s", TOKEN_PREFIX, tavilyProperties.getApiKey()))
+                .build();
+    }
 }

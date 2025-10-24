@@ -53,3 +53,8 @@ logging:
   level:
     org.tommap.springai: debug
     org.springframework.ai.chat.client.advisor: debug
+
+tavily:
+  api-key: ${TAVILY_API_KEY}
+  search-base-url: ${TAVILY_SEARCH_BASE_URL}
+  max-results: 5
