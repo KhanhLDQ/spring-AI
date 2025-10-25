@@ -1,5 +1,6 @@
 package org.tommap.springai.exception;
 
+import org.springframework.ai.tool.execution.ToolExecutionException;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
@@ -41,5 +42,11 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
     @ResponseStatus(BAD_REQUEST)
     public ApiResponse<Void> handleIllegalArgumentException(IllegalArgumentException ex) {
         return ApiResponse.error(BAD_REQUEST.value(), ex.getMessage());
+    }
+
+    @ExceptionHandler(ToolExecutionException.class)
+    @ResponseStatus(INTERNAL_SERVER_ERROR)
+    public ApiResponse<Void> handleToolExecutionException(ToolExecutionException ex) {
+        return ApiResponse.error(INTERNAL_SERVER_ERROR.value(), ex.getMessage());
     }
 }

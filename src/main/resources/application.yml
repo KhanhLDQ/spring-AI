@@ -37,6 +37,9 @@ spring:
     driver-class-name: org.h2.Driver
     username: khanh
     password: 12345
+  jpa:
+    hibernate:
+      ddl-auto: update #update the schema if necessary
   h2:
     console:
       enabled: true
