@@ -21,6 +21,19 @@
       "env": {
         "GITHUB_PERSONAL_ACCESS_TOKEN": "YOUR_GITHUB_PAT"
       }
+    },
+    "spring-mcp-server-stdio": {
+      "command": "/opt/homebrew/Cellar/openjdk@17/17.0.15/libexec/openjdk.jdk/Contents/Home/bin/java",
+      "args": [
+        "-jar",
+        "/Users/khanhle/Documents/odyssey/the-lab/mcp-server/stdio/target/stdio-0.0.1-SNAPSHOT.jar"
+      ],
+      "env": {
+        "AWS_ACCESS_KEY_ID": "AWS_ACCESS_KEY_ID",
+        "AWS_REGION": "AWS_REGION",
+        "AWS_SECRET_KEY": "AWS_SECRET_KEY",
+        "EMAIL_SENDER": "EMAIL_SENDER"
+      }
     }
   }
 }
