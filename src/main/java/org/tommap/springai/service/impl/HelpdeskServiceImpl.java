@@ -1,4 +1,4 @@
-package org.tommap.springai.repository.impl;
+package org.tommap.springai.service.impl;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;

@@ -34,3 +34,6 @@ build/
 
 ### H2 data
 data/
+
+### MCP servers test data
+test-server-filesystem-mcp-protocol/

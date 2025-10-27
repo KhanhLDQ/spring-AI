@@ -92,6 +92,12 @@
             <artifactId>spring-ai-starter-vector-store-qdrant</artifactId>
         </dependency>
 
+<!--        allow to configure MCP clients inside the MCP host (spring AI app) that maintain 1:1 connections with MCP servers-->
+        <dependency>
+            <groupId>org.springframework.ai</groupId>
+            <artifactId>spring-ai-starter-mcp-client</artifactId>
+        </dependency>
+
         <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>

@@ -30,6 +30,10 @@ spring:
         host: localhost
         port: 6334 #spring AI framework is going to use the gRPC protocol to communicate with vector database
         collection-name: tom
+    mcp:
+      client:
+        stdio: #setup MCP server locally
+          servers-configuration: classpath:mcp-servers.json #tell spring AI where to find the MCP server configuration - make sure the folders are present inside the local system
   main:
     banner-mode: off
   datasource:
