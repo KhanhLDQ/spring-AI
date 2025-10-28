@@ -27,7 +27,7 @@ public class McpServerController {
     }
 
     @PostMapping("/stdio")
-    public ResponseEntity<ApiResponse<String>> mcpServer(
+    public ResponseEntity<ApiResponse<String>> stdioMcpServer(
         @RequestHeader("username") String username,
         @RequestBody @Valid McpServerRequest request
     ) {
@@ -38,5 +38,19 @@ public class McpServerController {
                 .content();
 
         return ResponseEntity.ok(ApiResponse.ok("mcp server stdio response generated successfully", response));
+    }
+
+    @PostMapping("/remote")
+    public ResponseEntity<ApiResponse<String>> remoteMcpServer(
+        @RequestHeader("username") String username,
+        @RequestBody @Valid McpServerRequest request
+    ) {
+        var response = mcpChatClient.prompt()
+                .advisors(advisorSpec -> advisorSpec.param(CONVERSATION_ID, username))
+                .user(String.format("Username: %s - User Question: %s", username, request.getMessage()))
+                .call()
+                .content();
+
+        return ResponseEntity.ok(ApiResponse.ok("mcp server remote response generated successfully", response));
     }
 }
