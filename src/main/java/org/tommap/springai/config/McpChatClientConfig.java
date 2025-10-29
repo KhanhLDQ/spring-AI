@@ -7,6 +7,7 @@ import org.springframework.ai.chat.client.advisor.api.Advisor;
 import org.springframework.ai.chat.memory.ChatMemory;
 import org.springframework.ai.openai.OpenAiChatModel;
 import org.springframework.ai.tool.ToolCallbackProvider;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -30,6 +31,7 @@ import org.springframework.context.annotation.Configuration;
  */
 
 @Configuration
+@ConditionalOnProperty(value = "spring.ai.mcp.client.enabled", havingValue = "true")
 public class McpChatClientConfig {
     @Bean
     public ChatClient mcpChatClient(

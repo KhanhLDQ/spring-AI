@@ -2,6 +2,7 @@ package org.tommap.springai.controller;
 
 import org.springframework.ai.chat.client.ChatClient;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -17,6 +18,7 @@ import static org.springframework.ai.chat.memory.ChatMemory.CONVERSATION_ID;
 
 @RestController
 @RequestMapping("/api/v1/mcp-client")
+@ConditionalOnProperty(value = "spring.ai.mcp.client.enabled", havingValue = "true")
 public class McpClientController {
     private final ChatClient mcpChatClient;
 

@@ -37,3 +37,4 @@ data/
 
 ### MCP servers test data
 test-server-filesystem-mcp-protocol/
+src/main/resources/mcp-servers-credentials.json
