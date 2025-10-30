@@ -12,6 +12,7 @@ import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 import org.tommap.springai.model.response.ApiResponse;
 
+import java.io.IOException;
 import java.util.stream.Collectors;
 
 import static org.springframework.http.HttpStatus.BAD_REQUEST;
@@ -47,6 +48,12 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
     @ExceptionHandler(ToolExecutionException.class)
     @ResponseStatus(INTERNAL_SERVER_ERROR)
     public ApiResponse<Void> handleToolExecutionException(ToolExecutionException ex) {
+        return ApiResponse.error(INTERNAL_SERVER_ERROR.value(), ex.getMessage());
+    }
+
+    @ExceptionHandler(IOException.class)
+    @ResponseStatus(INTERNAL_SERVER_ERROR)
+    public ApiResponse<Void> handleIOException(IOException ex) {
         return ApiResponse.error(INTERNAL_SERVER_ERROR.value(), ex.getMessage());
     }
 }

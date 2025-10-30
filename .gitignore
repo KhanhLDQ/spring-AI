@@ -41,3 +41,8 @@ src/main/resources/mcp-servers-credentials.json
 
 ###Grafana
 grafana-storage/
+
+###MP3
+src/main/resources/transcription-test.mp3
+speech-output.mp3
+speech-output-options.mp3
