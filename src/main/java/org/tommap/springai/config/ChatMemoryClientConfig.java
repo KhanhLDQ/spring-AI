@@ -1,5 +1,6 @@
 package org.tommap.springai.config;
 
+import io.micrometer.observation.ObservationRegistry;
 import org.springframework.ai.chat.client.ChatClient;
 import org.springframework.ai.chat.client.advisor.MessageChatMemoryAdvisor;
 import org.springframework.ai.chat.client.advisor.SimpleLoggerAdvisor;
@@ -35,11 +36,11 @@ public class ChatMemoryClientConfig {
             + similarly if the total token count exceeds the context window size -> older messages get dropped -> LLM 'forget' what gets dropped
      */
     @Bean
-    public ChatClient openAiChatMemoryClient(OpenAiChatModel openAiChatModel, ChatMemory chatMemory, RetrievalAugmentationAdvisor retrievalAugmentationAdvisor) {
+    public ChatClient openAiChatMemoryClient(OpenAiChatModel openAiChatModel, ChatMemory chatMemory, RetrievalAugmentationAdvisor retrievalAugmentationAdvisor, ObservationRegistry observationRegistry) {
         Advisor loggerAdvisor = new SimpleLoggerAdvisor();
         Advisor memoryAdvisor = MessageChatMemoryAdvisor.builder(chatMemory).build();
 
-        return ChatClient.builder(openAiChatModel)
+        return ChatClient.builder(openAiChatModel, observationRegistry, null)
                 .defaultAdvisors(loggerAdvisor, memoryAdvisor, retrievalAugmentationAdvisor)
                 .build();
     }

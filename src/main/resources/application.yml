@@ -71,4 +71,18 @@ logging:
 tavily:
   api-key: ${TAVILY_API_KEY}
   search-base-url: ${TAVILY_SEARCH_BASE_URL}
-  max-results: 5
+  max-results: 3
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,metrics,prometheus
+  tracing:
+    sampling:
+      probability: 1.0 #trace everything (only in local|dev mode)
+
+opentelemetry:
+  exporter:
+    otlp:
+      endpoint: http://localhost:4317

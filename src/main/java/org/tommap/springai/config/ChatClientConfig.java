@@ -1,5 +1,6 @@
 package org.tommap.springai.config;
 
+import io.micrometer.observation.ObservationRegistry;
 import org.springframework.ai.chat.client.ChatClient;
 import org.springframework.ai.chat.client.advisor.SimpleLoggerAdvisor;
 import org.springframework.ai.ollama.OllamaChatModel;
@@ -43,8 +44,8 @@ public class ChatClientConfig {
      */
 
     @Bean
-    public ChatClient openAiChatClient(OpenAiChatModel openAiChatModel) {
-        return ChatClient.builder(openAiChatModel)
+    public ChatClient openAiChatClient(OpenAiChatModel openAiChatModel, ObservationRegistry observationRegistry) {
+        return ChatClient.builder(openAiChatModel, observationRegistry, null) //fix: disabled chat client auto-config loses metrics -> manually inject ObservationRegistry
                 .defaultAdvisors(new SimpleLoggerAdvisor(), new TokenUsageAuditAdvisor())
                 .defaultSystem(IT_HELPDESK_ASSISTANT_SYSTEM_ROLE)
                 .defaultUser(DEFAULT_USER_ROLE)
